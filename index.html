@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Detective Case Files</title>
+<title>Detective Investigation</title>
 
 <style>
 
@@ -14,12 +14,6 @@ background:black;
 color:white;
 }
 
-canvas{
-display:block;
-}
-
-/* MENU */
-
 #menu{
 position:absolute;
 width:100%;
@@ -27,50 +21,30 @@ height:100%;
 background:black;
 display:flex;
 flex-direction:column;
-justify-content:center;
 align-items:center;
+justify-content:center;
 z-index:10;
 }
 
 #menu h1{
 font-size:60px;
-margin-bottom:40px;
-letter-spacing:3px;
+margin-bottom:30px;
 }
 
 #menu button{
 padding:20px 40px;
-font-size:20px;
-border:none;
-background:white;
+font-size:22px;
 cursor:pointer;
-border-radius:8px;
 }
-
-/* HUD */
 
 #hud{
 position:absolute;
 top:20px;
 left:20px;
-background:rgba(0,0,0,0.6);
+background:rgba(0,0,0,0.5);
 padding:15px;
 border-radius:10px;
-z-index:5;
 }
-
-#crosshair{
-position:absolute;
-top:50%;
-left:50%;
-width:8px;
-height:8px;
-background:white;
-border-radius:50%;
-transform:translate(-50%,-50%);
-}
-
-/* Evidence */
 
 #evidence{
 position:absolute;
@@ -78,8 +52,19 @@ right:20px;
 top:20px;
 background:rgba(0,0,0,0.6);
 padding:15px;
-border-radius:10px;
 width:200px;
+border-radius:10px;
+}
+
+#crosshair{
+position:absolute;
+top:50%;
+left:50%;
+width:10px;
+height:10px;
+background:white;
+border-radius:50%;
+transform:translate(-50%,-50%);
 }
 
 </style>
@@ -88,14 +73,14 @@ width:200px;
 <body>
 
 <div id="menu">
-<h1>DETECTIVE FILES</h1>
-<button onclick="startGame()">START INVESTIGATION</button>
+<h1>DETECTIVE CASE</h1>
+<button onclick="startGame()">Start Investigation</button>
 </div>
 
 <div id="hud">
-Move: Arrow Keys<br>
-Look: Mouse<br>
-Find Evidence
+WASD = Move<br>
+Mouse = Look<br>
+Click = Inspect
 </div>
 
 <div id="evidence">
@@ -110,9 +95,9 @@ Find Evidence
 <script>
 
 let scene,camera,renderer
-let keys={}
 let objects=[]
-let evidenceFound=[]
+let keys={}
+let evidence=[]
 
 let yaw=0
 let pitch=0
@@ -124,9 +109,9 @@ document.getElementById("menu").style.display="none"
 init()
 animate()
 
-}
+document.body.requestPointerLock()
 
-/* SCENE */
+}
 
 function init(){
 
@@ -139,107 +124,76 @@ window.innerWidth/window.innerHeight,
 1000
 )
 
+camera.position.set(0,1.8,8)
+
 renderer=new THREE.WebGLRenderer({antialias:true})
 renderer.setSize(window.innerWidth,window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
-camera.position.set(0,1.7,6)
-
-/* LIGHT */
+const ambient=new THREE.AmbientLight(0xffffff,0.4)
+scene.add(ambient)
 
 const light=new THREE.PointLight(0xffffff,2)
 light.position.set(0,5,5)
 scene.add(light)
 
-const ambient=new THREE.AmbientLight(0x404040)
-scene.add(ambient)
-
-/* FLOOR */
-
 const floor=new THREE.Mesh(
-new THREE.PlaneGeometry(40,40),
-new THREE.MeshStandardMaterial({color:0x222222})
+new THREE.PlaneGeometry(50,50),
+new THREE.MeshStandardMaterial({color:0x1a1a1a})
 )
 
 floor.rotation.x=-Math.PI/2
 scene.add(floor)
 
-/* WALLS */
+createWall(0,-25,0)
+createWall(0,25,0)
+createWall(-25,0,Math.PI/2)
+createWall(25,0,Math.PI/2)
 
-const wallMat=new THREE.MeshStandardMaterial({color:0x444444})
+createClue(0,1,"Suspicious Note")
+createClue(-3,1,"Bloody Knife")
+createClue(3,1,"Victim Phone")
+createClue(5,1,"Broken Watch")
 
-function wall(x,z,r){
+document.addEventListener("keydown",e=>keys[e.key.toLowerCase()]=true)
+document.addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false)
 
-let w=new THREE.Mesh(
-new THREE.BoxGeometry(40,8,1),
-wallMat
-)
-
-w.position.set(x,4,z)
-w.rotation.y=r
-scene.add(w)
+document.addEventListener("mousemove",look)
+document.addEventListener("click",interact)
 
 }
 
-wall(0,-20,0)
-wall(0,20,0)
-wall(-20,0,Math.PI/2)
-wall(20,0,Math.PI/2)
+function createWall(x,z,r){
 
-/* DESK */
-
-let desk=new THREE.Mesh(
-new THREE.BoxGeometry(3,1,2),
-new THREE.MeshStandardMaterial({color:0x6b4a2f})
+let wall=new THREE.Mesh(
+new THREE.BoxGeometry(50,8,1),
+new THREE.MeshStandardMaterial({color:0x444444})
 )
 
-desk.position.set(0,0.5,0)
-scene.add(desk)
+wall.position.set(x,4,z)
+wall.rotation.y=r
 
-/* CLUE 1 */
+scene.add(wall)
 
-let note=new THREE.Mesh(
-new THREE.BoxGeometry(0.5,0.05,0.5),
-new THREE.MeshStandardMaterial({color:0xffffaa})
+}
+
+function createClue(x,z,name){
+
+let obj=new THREE.Mesh(
+new THREE.BoxGeometry(0.5,0.2,0.5),
+new THREE.MeshStandardMaterial({color:0xffd966})
 )
 
-note.position.set(0,1.05,0)
-note.userData.clue="Strange Note"
-scene.add(note)
-objects.push(note)
+obj.position.set(x,0.5,z)
 
-/* CLUE 2 */
+obj.userData.name=name
 
-let knife=new THREE.Mesh(
-new THREE.BoxGeometry(0.1,0.1,1),
-new THREE.MeshStandardMaterial({color:0xaaaaaa})
-)
+scene.add(obj)
+objects.push(obj)
 
-knife.position.set(-3,0.5,-2)
-knife.userData.clue="Bloody Knife"
-scene.add(knife)
-objects.push(knife)
+}
 
-/* CLUE 3 */
-
-let phone=new THREE.Mesh(
-new THREE.BoxGeometry(0.4,0.1,0.7),
-new THREE.MeshStandardMaterial({color:0x111111})
-)
-
-phone.position.set(2,0.5,3)
-phone.userData.clue="Victim's Phone"
-scene.add(phone)
-objects.push(phone)
-
-/* INPUT */
-
-document.addEventListener("keydown",e=>keys[e.key]=true)
-document.addEventListener("keyup",e=>keys[e.key]=false)
-
-/* MOUSE LOOK */
-
-document.addEventListener("mousemove",e=>{
+function look(e){
 
 yaw-=e.movementX*0.002
 pitch-=e.movementY*0.002
@@ -250,55 +204,44 @@ camera.rotation.order="YXZ"
 camera.rotation.y=yaw
 camera.rotation.x=pitch
 
-})
-
-document.addEventListener("click",interact)
-
 }
-
-/* MOVEMENT */
 
 function move(){
 
-let speed=0.12
+let speed=0.15
 
 let forward=new THREE.Vector3()
 camera.getWorldDirection(forward)
 
 let right=new THREE.Vector3()
-right.crossVectors(camera.up,forward).normalize()
+right.crossVectors(camera.up,forward)
 
-if(keys["ArrowUp"]) camera.position.add(forward.multiplyScalar(speed))
-if(keys["ArrowDown"]) camera.position.add(forward.multiplyScalar(-speed))
-if(keys["ArrowLeft"]) camera.position.add(right.multiplyScalar(speed))
-if(keys["ArrowRight"]) camera.position.add(right.multiplyScalar(-speed))
+if(keys["w"]) camera.position.add(forward.multiplyScalar(speed))
+if(keys["s"]) camera.position.add(forward.multiplyScalar(-speed))
+if(keys["a"]) camera.position.add(right.multiplyScalar(speed))
+if(keys["d"]) camera.position.add(right.multiplyScalar(-speed))
 
 }
-
-/* INTERACTION */
 
 function interact(){
 
 let ray=new THREE.Raycaster()
 
-ray.setFromCamera(
-new THREE.Vector2(0,0),
-camera
-)
+ray.setFromCamera(new THREE.Vector2(0,0),camera)
 
 let hit=ray.intersectObjects(objects)
 
 if(hit.length>0){
 
-let obj=hit[0].object
-let clue=obj.userData.clue
+let clue=hit[0].object.userData.name
 
-if(!evidenceFound.includes(clue)){
+if(!evidence.includes(clue)){
 
-evidenceFound.push(clue)
+evidence.push(clue)
 
 let li=document.createElement("li")
 li.textContent=clue
+
 document.getElementById("evidenceList").appendChild(li)
 
 }
@@ -306,8 +249,6 @@ document.getElementById("evidenceList").appendChild(li)
 }
 
 }
-
-/* LOOP */
 
 function animate(){
 
