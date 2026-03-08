@@ -14,7 +14,7 @@
 <style>
 
 .case-container{
-max-width:900px;
+max-width:1000px;
 margin:auto;
 padding:60px 20px;
 text-align:center;
@@ -27,12 +27,17 @@ border-radius:10px;
 margin-bottom:40px;
 }
 
+.board{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:40px;
+margin-bottom:40px;
+}
+
 .clues{
 display:flex;
-gap:20px;
-justify-content:center;
-flex-wrap:wrap;
-margin-bottom:40px;
+flex-direction:column;
+gap:15px;
 }
 
 .clue{
@@ -40,19 +45,30 @@ background:#1e293b;
 padding:20px;
 border-radius:10px;
 cursor:pointer;
-width:200px;
 transition:0.3s;
 }
 
 .clue:hover{
-transform:scale(1.05);
 border:1px solid #38bdf8;
+transform:scale(1.03);
+}
+
+.evidence-box{
+background:#020617;
+padding:20px;
+border-radius:10px;
+min-height:200px;
+text-align:left;
+}
+
+.evidence-box h3{
+margin-top:0;
 }
 
 .suspects{
 display:flex;
-gap:20px;
 justify-content:center;
+gap:20px;
 flex-wrap:wrap;
 }
 
@@ -66,13 +82,13 @@ transition:0.3s;
 }
 
 .suspect:hover{
-transform:scale(1.05);
 border:1px solid #38bdf8;
+transform:scale(1.05);
 }
 
 .result{
 margin-top:40px;
-font-size:22px;
+font-size:24px;
 font-weight:600;
 }
 
@@ -83,15 +99,11 @@ font-weight:600;
 <body>
 
 <nav class="navbar">
-
 <div class="logo">🕵️ MysteryLab</div>
-
 <div class="nav-links">
 <a href="index.html">Home</a>
 </div>
-
 </nav>
-
 
 <div class="case-container">
 
@@ -100,24 +112,28 @@ font-weight:600;
 <div class="story">
 
 <p>
-A priceless necklace has disappeared during a party.
-Three people were in the room when the lights went out.
-Find the clues and identify the thief.
+During a wealthy mansion party, the lights suddenly went out.
+When they came back on, the priceless diamond necklace was gone.
+
+Three suspects were nearby.
+
+Search for clues and determine the thief.
 </p>
 
 </div>
 
-
-<h2>🔎 Click Clues</h2>
+<div class="board">
 
 <div class="clues">
 
+<h2>🔎 Crime Scene</h2>
+
 <div class="clue" onclick="showClue('footprint')">
-👣 Footprint
+👣 Footprint Near the Window
 </div>
 
 <div class="clue" onclick="showClue('note')">
-📝 Mysterious Note
+📝 Crumpled Note
 </div>
 
 <div class="clue" onclick="showClue('glass')">
@@ -127,21 +143,36 @@ Find the clues and identify the thief.
 </div>
 
 
+<div class="evidence-box">
 
-<h2>🧠 Who is the thief?</h2>
+<h3>📋 Evidence Log</h3>
+
+<p id="evidenceText">
+Click clues to analyze them...
+</p>
+
+</div>
+
+</div>
+
+
+<h2>🧠 Choose the Thief</h2>
 
 <div class="suspects">
 
 <div class="suspect" onclick="guess('butler')">
 🤵 Butler
+<p>Claims he was serving drinks</p>
 </div>
 
 <div class="suspect" onclick="guess('chef')">
 👨‍🍳 Chef
+<p>Says he was in the kitchen</p>
 </div>
 
 <div class="suspect" onclick="guess('guest')">
-🧑 Guest
+🧑 Wealthy Guest
+<p>Recently lost money gambling</p>
 </div>
 
 </div>
@@ -151,21 +182,22 @@ Find the clues and identify the thief.
 </div>
 
 
-
 <script>
 
 function showClue(type){
 
+const evidence = document.getElementById("evidenceText")
+
 if(type === "footprint"){
-alert("The footprint is very large — likely a man's shoe.")
+evidence.innerHTML = "👣 Large shoeprint. Likely a man's formal shoe."
 }
 
 if(type === "note"){
-alert("The note says: 'Meet me after midnight.'")
+evidence.innerHTML = "📝 The note reads: 'Meet me after midnight.' Possibly a secret meeting."
 }
 
 if(type === "glass"){
-alert("The wine glass has lipstick on it.")
+evidence.innerHTML = "🥃 Wine glass with lipstick. Probably belongs to a woman."
 }
 
 }
@@ -176,19 +208,24 @@ function guess(person){
 const result = document.getElementById("result")
 
 if(person === "guest"){
-result.innerHTML = "🏆 Correct! The guest stole the necklace!"
+
+result.innerHTML = "🏆 Case Solved! The guest stole the necklace to pay off gambling debts."
+
 result.style.color = "lightgreen"
+
 }
 
 else{
-result.innerHTML = "❌ Wrong suspect. Try again."
+
+result.innerHTML = "❌ That suspect doesn't fit the clues. Investigate more."
+
 result.style.color = "tomato"
+
 }
 
 }
 
 </script>
-
 
 </body>
 
