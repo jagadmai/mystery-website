@@ -2,45 +2,105 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Detective Investigation</title>
+<title>Detective Case Files</title>
 
 <style>
+
 body{
 margin:0;
 overflow:hidden;
 font-family:Arial;
 background:black;
+color:white;
 }
+
+canvas{
+display:block;
+}
+
+/* MENU */
+
+#menu{
+position:absolute;
+width:100%;
+height:100%;
+background:black;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:10;
+}
+
+#menu h1{
+font-size:60px;
+margin-bottom:40px;
+letter-spacing:3px;
+}
+
+#menu button{
+padding:20px 40px;
+font-size:20px;
+border:none;
+background:white;
+cursor:pointer;
+border-radius:8px;
+}
+
+/* HUD */
 
 #hud{
 position:absolute;
 top:20px;
 left:20px;
-color:white;
 background:rgba(0,0,0,0.6);
 padding:15px;
 border-radius:10px;
+z-index:5;
 }
 
 #crosshair{
 position:absolute;
 top:50%;
 left:50%;
-width:10px;
-height:10px;
+width:8px;
+height:8px;
 background:white;
-transform:translate(-50%,-50%);
 border-radius:50%;
+transform:translate(-50%,-50%);
 }
-</style>
 
+/* Evidence */
+
+#evidence{
+position:absolute;
+right:20px;
+top:20px;
+background:rgba(0,0,0,0.6);
+padding:15px;
+border-radius:10px;
+width:200px;
+}
+
+</style>
 </head>
+
 <body>
 
+<div id="menu">
+<h1>DETECTIVE FILES</h1>
+<button onclick="startGame()">START INVESTIGATION</button>
+</div>
+
 <div id="hud">
-<h2>Detective Case #001</h2>
-<p>Use Arrow Keys to move</p>
-<p>Find clues in the room</p>
+Move: Arrow Keys<br>
+Look: Mouse<br>
+Find Evidence
+</div>
+
+<div id="evidence">
+<b>Evidence</b>
+<ul id="evidenceList"></ul>
 </div>
 
 <div id="crosshair"></div>
@@ -49,183 +109,215 @@ border-radius:50%;
 
 <script>
 
-let scene = new THREE.Scene()
+let scene,camera,renderer
+let keys={}
+let objects=[]
+let evidenceFound=[]
 
-let camera = new THREE.PerspectiveCamera(
+let yaw=0
+let pitch=0
+
+function startGame(){
+
+document.getElementById("menu").style.display="none"
+
+init()
+animate()
+
+}
+
+/* SCENE */
+
+function init(){
+
+scene=new THREE.Scene()
+
+camera=new THREE.PerspectiveCamera(
 75,
 window.innerWidth/window.innerHeight,
 0.1,
 1000
 )
 
-let renderer = new THREE.WebGLRenderer({antialias:true})
+renderer=new THREE.WebGLRenderer({antialias:true})
 renderer.setSize(window.innerWidth,window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
-camera.position.set(0,1.6,5)
+camera.position.set(0,1.7,6)
 
+/* LIGHT */
 
-
-
-
-// LIGHT
-
-const light = new THREE.PointLight(0xffffff,2)
+const light=new THREE.PointLight(0xffffff,2)
 light.position.set(0,5,5)
 scene.add(light)
 
-const ambient = new THREE.AmbientLight(0x404040)
+const ambient=new THREE.AmbientLight(0x404040)
 scene.add(ambient)
 
+/* FLOOR */
 
+const floor=new THREE.Mesh(
+new THREE.PlaneGeometry(40,40),
+new THREE.MeshStandardMaterial({color:0x222222})
+)
 
-
-
-// FLOOR
-
-const floorGeo = new THREE.PlaneGeometry(50,50)
-const floorMat = new THREE.MeshStandardMaterial({color:0x222222})
-const floor = new THREE.Mesh(floorGeo,floorMat)
-
-floor.rotation.x = -Math.PI/2
+floor.rotation.x=-Math.PI/2
 scene.add(floor)
 
+/* WALLS */
 
+const wallMat=new THREE.MeshStandardMaterial({color:0x444444})
 
+function wall(x,z,r){
 
-
-// WALLS
-
-const wallMat = new THREE.MeshStandardMaterial({color:0x444444})
-
-function createWall(x,z,rotation){
-
-const wall = new THREE.Mesh(
-new THREE.BoxGeometry(50,10,1),
+let w=new THREE.Mesh(
+new THREE.BoxGeometry(40,8,1),
 wallMat
 )
 
-wall.position.set(x,5,z)
-wall.rotation.y = rotation
-
-scene.add(wall)
+w.position.set(x,4,z)
+w.rotation.y=r
+scene.add(w)
 
 }
 
-createWall(0,-25,0)
-createWall(0,25,0)
-createWall(-25,0,Math.PI/2)
-createWall(25,0,Math.PI/2)
+wall(0,-20,0)
+wall(0,20,0)
+wall(-20,0,Math.PI/2)
+wall(20,0,Math.PI/2)
 
+/* DESK */
 
-
-
-
-// DESK (CLUE)
-
-const desk = new THREE.Mesh(
-new THREE.BoxGeometry(2,1,1),
-new THREE.MeshStandardMaterial({color:0x8b4513})
+let desk=new THREE.Mesh(
+new THREE.BoxGeometry(3,1,2),
+new THREE.MeshStandardMaterial({color:0x6b4a2f})
 )
 
 desk.position.set(0,0.5,0)
 scene.add(desk)
 
+/* CLUE 1 */
 
-
-
-
-// NOTE (CLUE)
-
-const note = new THREE.Mesh(
-new THREE.BoxGeometry(0.6,0.05,0.6),
+let note=new THREE.Mesh(
+new THREE.BoxGeometry(0.5,0.05,0.5),
 new THREE.MeshStandardMaterial({color:0xffffaa})
 )
 
 note.position.set(0,1.05,0)
+note.userData.clue="Strange Note"
 scene.add(note)
+objects.push(note)
 
+/* CLUE 2 */
 
+let knife=new THREE.Mesh(
+new THREE.BoxGeometry(0.1,0.1,1),
+new THREE.MeshStandardMaterial({color:0xaaaaaa})
+)
 
+knife.position.set(-3,0.5,-2)
+knife.userData.clue="Bloody Knife"
+scene.add(knife)
+objects.push(knife)
 
+/* CLUE 3 */
 
-// MOVEMENT
+let phone=new THREE.Mesh(
+new THREE.BoxGeometry(0.4,0.1,0.7),
+new THREE.MeshStandardMaterial({color:0x111111})
+)
 
-let speed = 0.12
-let keys = {}
+phone.position.set(2,0.5,3)
+phone.userData.clue="Victim's Phone"
+scene.add(phone)
+objects.push(phone)
 
-document.addEventListener("keydown",e=>{
-keys[e.key] = true
+/* INPUT */
+
+document.addEventListener("keydown",e=>keys[e.key]=true)
+document.addEventListener("keyup",e=>keys[e.key]=false)
+
+/* MOUSE LOOK */
+
+document.addEventListener("mousemove",e=>{
+
+yaw-=e.movementX*0.002
+pitch-=e.movementY*0.002
+
+pitch=Math.max(-1.5,Math.min(1.5,pitch))
+
+camera.rotation.order="YXZ"
+camera.rotation.y=yaw
+camera.rotation.x=pitch
+
 })
 
-document.addEventListener("keyup",e=>{
-keys[e.key] = false
-})
-
-
-
-
-
-function movePlayer(){
-
-if(keys["ArrowUp"]) camera.position.z -= speed
-if(keys["ArrowDown"]) camera.position.z += speed
-if(keys["ArrowLeft"]) camera.position.x -= speed
-if(keys["ArrowRight"]) camera.position.x += speed
+document.addEventListener("click",interact)
 
 }
 
+/* MOVEMENT */
 
+function move(){
 
+let speed=0.12
 
+let forward=new THREE.Vector3()
+camera.getWorldDirection(forward)
 
-// CLUE DETECTION
+let right=new THREE.Vector3()
+right.crossVectors(camera.up,forward).normalize()
 
-function checkClue(){
+if(keys["ArrowUp"]) camera.position.add(forward.multiplyScalar(speed))
+if(keys["ArrowDown"]) camera.position.add(forward.multiplyScalar(-speed))
+if(keys["ArrowLeft"]) camera.position.add(right.multiplyScalar(speed))
+if(keys["ArrowRight"]) camera.position.add(right.multiplyScalar(-speed))
 
-let distance = camera.position.distanceTo(note.position)
+}
 
-if(distance < 1.5){
+/* INTERACTION */
 
-document.getElementById("hud").innerHTML =
-"<h2>Clue Found</h2><p>The note says:</p><p><b>'Meet at midnight.'</b></p>"
+function interact(){
+
+let ray=new THREE.Raycaster()
+
+ray.setFromCamera(
+new THREE.Vector2(0,0),
+camera
+)
+
+let hit=ray.intersectObjects(objects)
+
+if(hit.length>0){
+
+let obj=hit[0].object
+let clue=obj.userData.clue
+
+if(!evidenceFound.includes(clue)){
+
+evidenceFound.push(clue)
+
+let li=document.createElement("li")
+li.textContent=clue
+document.getElementById("evidenceList").appendChild(li)
 
 }
 
 }
 
+}
 
-
-
-
-// GAME LOOP
+/* LOOP */
 
 function animate(){
 
 requestAnimationFrame(animate)
 
-movePlayer()
-checkClue()
+move()
 
 renderer.render(scene,camera)
 
 }
-
-animate()
-
-
-
-
-// RESIZE FIX
-
-window.addEventListener("resize",()=>{
-
-camera.aspect = window.innerWidth/window.innerHeight
-camera.updateProjectionMatrix()
-
-renderer.setSize(window.innerWidth,window.innerHeight)
-
-})
 
 </script>
 
