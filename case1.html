@@ -1,236 +1,65 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Case 1 - MysteryLab</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="style.css">
-
-<style>
-
-.case-container{
-max-width:1100px;
-margin:auto;
-padding:50px 20px;
-text-align:center;
-}
-
-.story{
-background:#1e293b;
-padding:30px;
-border-radius:10px;
-margin-bottom:40px;
-}
-
-.game-area{
-display:grid;
-grid-template-columns:2fr 1fr;
-gap:40px;
-}
-
-.crime-scene{
-position:relative;
-}
-
-.crime-scene img{
-width:100%;
-border-radius:10px;
-}
-
-/* visible clues */
-
-.clue-item{
-position:absolute;
-font-size:30px;
-cursor:pointer;
-transition:0.2s;
-}
-
-.clue-item:hover{
-transform:scale(1.3);
-}
-
-/* clue positions */
-
-.footprint{
-bottom:20%;
-left:45%;
-}
-
-.note{
-top:45%;
-left:60%;
-}
-
-.glass{
-top:35%;
-left:30%;
-}
-
-.evidence-box{
-background:#020617;
-padding:20px;
-border-radius:10px;
-min-height:250px;
-text-align:left;
-}
-
-.suspects{
-margin-top:40px;
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-}
-
-.suspect{
-background:#1e293b;
-padding:20px;
-border-radius:10px;
-cursor:pointer;
-width:200px;
-transition:0.3s;
-}
-
-.suspect:hover{
-border:1px solid #38bdf8;
-transform:scale(1.05);
-}
-
-.result{
-margin-top:40px;
-font-size:24px;
-font-weight:600;
-}
-
-</style>
 
 </head>
 
 <body>
 
 <nav class="navbar">
-<div class="logo">🕵️ MysteryLab</div>
-<div class="nav-links">
-<a href="index.html">Home</a>
-</div>
+
+<h1 class="logo">MysteryLab</h1>
+
+<ul class="nav-links">
+<li><a href="index.html">Home</a></li>
+</ul>
+
 </nav>
 
-<div class="case-container">
+<section class="case-container">
 
-<h1>Case 1: The Missing Necklace</h1>
+<h2>The Missing Necklace</h2>
 
-<div class="story">
-
-<p>
-During a mansion party, the lights suddenly went out.
-When they came back on, the priceless necklace was gone.
-
-Search the room and gather clues.
+<p class="instructions">
+Click objects in the house to search for clues.
 </p>
-
-</div>
-
-<div class="game-area">
 
 <div class="crime-scene">
 
-<img src="https://images.unsplash.com/photo-1618220179428-22790b461013">
+<img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200" class="scene-image">
 
-<div class="clue-item footprint" onclick="showClue('footprint')">👣</div>
-
-<div class="clue-item note" onclick="showClue('note')">📝</div>
-
-<div class="clue-item glass" onclick="showClue('glass')">🥃</div>
+<div class="clue clue1" onclick="showClue('footprint')"></div>
+<div class="clue clue2" onclick="showClue('letter')"></div>
+<div class="clue clue3" onclick="showClue('window')"></div>
 
 </div>
 
-<div class="evidence-box">
+<div class="clue-box" id="clueBox">
 
-<h3>📋 Evidence Log</h3>
+<h3>Clue</h3>
 
-<p id="evidenceText">
-Click clues in the room to analyze them.
-</p>
+<p id="clueText"></p>
 
 </div>
 
-</div>
+<div class="solution">
 
-<h2>🧠 Who stole the necklace?</h2>
+<input id="answer" placeholder="Who stole the necklace?">
 
-<div class="suspects">
-
-<div class="suspect" onclick="guess('butler')">
-🤵 Butler
-<p>Serving drinks</p>
-</div>
-
-<div class="suspect" onclick="guess('chef')">
-👨‍🍳 Chef
-<p>In the kitchen</p>
-</div>
-
-<div class="suspect" onclick="guess('guest')">
-🧑 Wealthy Guest
-<p>Gambling debts</p>
-</div>
+<button onclick="checkAnswer()">Submit</button>
 
 </div>
 
-<div class="result" id="result"></div>
+</section>
 
-</div>
-
-<script>
-
-function showClue(type){
-
-const evidence = document.getElementById("evidenceText")
-
-if(type === "footprint"){
-evidence.innerHTML = "👣 A large formal shoeprint. Probably a man."
-}
-
-if(type === "note"){
-evidence.innerHTML = "📝 The note reads: 'Meet me after midnight.' Someone planned something."
-}
-
-if(type === "glass"){
-evidence.innerHTML = "🥃 A wine glass with lipstick."
-}
-
-}
-
-function guess(person){
-
-const result = document.getElementById("result")
-
-if(person === "guest"){
-
-result.innerHTML = "🏆 Case Solved! The wealthy guest stole the necklace."
-
-result.style.color = "lightgreen"
-
-}
-
-else{
-
-result.innerHTML = "❌ That suspect doesn't match the clues."
-
-result.style.color = "tomato"
-
-}
-
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
-
 </html>
