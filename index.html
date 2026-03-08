@@ -1,26 +1,233 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-<title>MysteryLab 3D Detective</title>
+<meta charset="UTF-8">
+<title>Detective Investigation</title>
 
 <style>
 body{
 margin:0;
 overflow:hidden;
+font-family:Arial;
 background:black;
+}
+
+#hud{
+position:absolute;
+top:20px;
+left:20px;
+color:white;
+background:rgba(0,0,0,0.6);
+padding:15px;
+border-radius:10px;
+}
+
+#crosshair{
+position:absolute;
+top:50%;
+left:50%;
+width:10px;
+height:10px;
+background:white;
+transform:translate(-50%,-50%);
+border-radius:50%;
 }
 </style>
 
 </head>
-
 <body>
+
+<div id="hud">
+<h2>Detective Case #001</h2>
+<p>Use Arrow Keys to move</p>
+<p>Find clues in the room</p>
+</div>
+
+<div id="crosshair"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 
-<script src="main.js"></script>
+<script>
+
+let scene = new THREE.Scene()
+
+let camera = new THREE.PerspectiveCamera(
+75,
+window.innerWidth/window.innerHeight,
+0.1,
+1000
+)
+
+let renderer = new THREE.WebGLRenderer({antialias:true})
+renderer.setSize(window.innerWidth,window.innerHeight)
+document.body.appendChild(renderer.domElement)
+
+camera.position.set(0,1.6,5)
+
+
+
+
+
+// LIGHT
+
+const light = new THREE.PointLight(0xffffff,2)
+light.position.set(0,5,5)
+scene.add(light)
+
+const ambient = new THREE.AmbientLight(0x404040)
+scene.add(ambient)
+
+
+
+
+
+// FLOOR
+
+const floorGeo = new THREE.PlaneGeometry(50,50)
+const floorMat = new THREE.MeshStandardMaterial({color:0x222222})
+const floor = new THREE.Mesh(floorGeo,floorMat)
+
+floor.rotation.x = -Math.PI/2
+scene.add(floor)
+
+
+
+
+
+// WALLS
+
+const wallMat = new THREE.MeshStandardMaterial({color:0x444444})
+
+function createWall(x,z,rotation){
+
+const wall = new THREE.Mesh(
+new THREE.BoxGeometry(50,10,1),
+wallMat
+)
+
+wall.position.set(x,5,z)
+wall.rotation.y = rotation
+
+scene.add(wall)
+
+}
+
+createWall(0,-25,0)
+createWall(0,25,0)
+createWall(-25,0,Math.PI/2)
+createWall(25,0,Math.PI/2)
+
+
+
+
+
+// DESK (CLUE)
+
+const desk = new THREE.Mesh(
+new THREE.BoxGeometry(2,1,1),
+new THREE.MeshStandardMaterial({color:0x8b4513})
+)
+
+desk.position.set(0,0.5,0)
+scene.add(desk)
+
+
+
+
+
+// NOTE (CLUE)
+
+const note = new THREE.Mesh(
+new THREE.BoxGeometry(0.6,0.05,0.6),
+new THREE.MeshStandardMaterial({color:0xffffaa})
+)
+
+note.position.set(0,1.05,0)
+scene.add(note)
+
+
+
+
+
+// MOVEMENT
+
+let speed = 0.12
+let keys = {}
+
+document.addEventListener("keydown",e=>{
+keys[e.key] = true
+})
+
+document.addEventListener("keyup",e=>{
+keys[e.key] = false
+})
+
+
+
+
+
+function movePlayer(){
+
+if(keys["ArrowUp"]) camera.position.z -= speed
+if(keys["ArrowDown"]) camera.position.z += speed
+if(keys["ArrowLeft"]) camera.position.x -= speed
+if(keys["ArrowRight"]) camera.position.x += speed
+
+}
+
+
+
+
+
+// CLUE DETECTION
+
+function checkClue(){
+
+let distance = camera.position.distanceTo(note.position)
+
+if(distance < 1.5){
+
+document.getElementById("hud").innerHTML =
+"<h2>Clue Found</h2><p>The note says:</p><p><b>'Meet at midnight.'</b></p>"
+
+}
+
+}
+
+
+
+
+
+// GAME LOOP
+
+function animate(){
+
+requestAnimationFrame(animate)
+
+movePlayer()
+checkClue()
+
+renderer.render(scene,camera)
+
+}
+
+animate()
+
+
+
+
+// RESIZE FIX
+
+window.addEventListener("resize",()=>{
+
+camera.aspect = window.innerWidth/window.innerHeight
+camera.updateProjectionMatrix()
+
+renderer.setSize(window.innerWidth,window.innerHeight)
+
+})
+
+</script>
 
 </body>
-
 </html>
