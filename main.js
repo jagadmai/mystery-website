@@ -6,7 +6,7 @@ width: 1000,
 
 height: 600,
 
-backgroundColor: "#111",
+backgroundColor: "#000",
 
 scene: [PreloadScene, MenuScene, Case1Scene]
 
