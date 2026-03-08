@@ -31,7 +31,6 @@ margin-bottom:40px;
 display:grid;
 grid-template-columns:2fr 1fr;
 gap:40px;
-align-items:start;
 }
 
 .crime-scene{
@@ -43,38 +42,34 @@ width:100%;
 border-radius:10px;
 }
 
-.object{
+/* visible clues */
+
+.clue-item{
 position:absolute;
-border:2px solid transparent;
+font-size:30px;
 cursor:pointer;
+transition:0.2s;
 }
 
-.object:hover{
-border:2px solid #38bdf8;
-box-shadow:0 0 10px #38bdf8;
+.clue-item:hover{
+transform:scale(1.3);
 }
 
-/* object locations */
+/* clue positions */
 
 .footprint{
 bottom:20%;
-left:40%;
-width:80px;
-height:60px;
+left:45%;
 }
 
 .note{
 top:45%;
-left:55%;
-width:70px;
-height:50px;
+left:60%;
 }
 
 .glass{
-top:30%;
+top:35%;
 left:30%;
-width:70px;
-height:70px;
 }
 
 .evidence-box{
@@ -133,10 +128,10 @@ font-weight:600;
 <div class="story">
 
 <p>
-At a mansion party, the lights suddenly went out.
-When they came back on, a priceless necklace was gone.
+During a mansion party, the lights suddenly went out.
+When they came back on, the priceless necklace was gone.
 
-Investigate the room and uncover the truth.
+Search the room and gather clues.
 </p>
 
 </div>
@@ -145,11 +140,13 @@ Investigate the room and uncover the truth.
 
 <div class="crime-scene">
 
-<img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c" alt="room">
+<img src="https://images.unsplash.com/photo-1618220179428-22790b461013">
 
-<div class="object footprint" onclick="showClue('footprint')"></div>
-<div class="object note" onclick="showClue('note')"></div>
-<div class="object glass" onclick="showClue('glass')"></div>
+<div class="clue-item footprint" onclick="showClue('footprint')">👣</div>
+
+<div class="clue-item note" onclick="showClue('note')">📝</div>
+
+<div class="clue-item glass" onclick="showClue('glass')">🥃</div>
 
 </div>
 
@@ -158,13 +155,12 @@ Investigate the room and uncover the truth.
 <h3>📋 Evidence Log</h3>
 
 <p id="evidenceText">
-Click objects in the room to analyze them.
+Click clues in the room to analyze them.
 </p>
 
 </div>
 
 </div>
-
 
 <h2>🧠 Who stole the necklace?</h2>
 
@@ -172,17 +168,17 @@ Click objects in the room to analyze them.
 
 <div class="suspect" onclick="guess('butler')">
 🤵 Butler
-<p>Serving drinks all night</p>
+<p>Serving drinks</p>
 </div>
 
 <div class="suspect" onclick="guess('chef')">
 👨‍🍳 Chef
-<p>Working in the kitchen</p>
+<p>In the kitchen</p>
 </div>
 
 <div class="suspect" onclick="guess('guest')">
 🧑 Wealthy Guest
-<p>Recently lost money gambling</p>
+<p>Gambling debts</p>
 </div>
 
 </div>
@@ -198,19 +194,18 @@ function showClue(type){
 const evidence = document.getElementById("evidenceText")
 
 if(type === "footprint"){
-evidence.innerHTML = "👣 Large formal shoeprint near the window."
+evidence.innerHTML = "👣 A large formal shoeprint. Probably a man."
 }
 
 if(type === "note"){
-evidence.innerHTML = "📝 A note reads: 'Meet me after midnight.' Someone planned something."
+evidence.innerHTML = "📝 The note reads: 'Meet me after midnight.' Someone planned something."
 }
 
 if(type === "glass"){
-evidence.innerHTML = "🥃 Wine glass with lipstick — likely from a female guest."
+evidence.innerHTML = "🥃 A wine glass with lipstick."
 }
 
 }
-
 
 function guess(person){
 
@@ -218,7 +213,7 @@ const result = document.getElementById("result")
 
 if(person === "guest"){
 
-result.innerHTML = "🏆 Case Solved! The wealthy guest stole the necklace to pay gambling debts."
+result.innerHTML = "🏆 Case Solved! The wealthy guest stole the necklace."
 
 result.style.color = "lightgreen"
 
