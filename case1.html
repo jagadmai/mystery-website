@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Case 1</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>Case 1: The Missing Trophy</h1>
+
+<p>The school trophy disappeared last night.</p>
+
+<h3>Suspects</h3>
+
+<button onclick="checkAnswer('janitor')">Janitor</button>
+<button onclick="checkAnswer('captain')">Basketball Captain</button>
+<button onclick="checkAnswer('assistant')">Principal's Assistant</button>
+
+<h3>Clue</h3>
+
+<img src="https://picsum.photos/300" onclick="revealClue()" style="cursor:pointer">
+
+<p id="clue"></p>
+<p id="result"></p>
+
+<script src="script.js"></script>
+<script src="clues.js"></script>
+
+</body>
+</html>
