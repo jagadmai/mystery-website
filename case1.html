@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Case 1 - MysteryLab</title>
+<title>Case 1</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -15,7 +16,7 @@
 
 <nav class="navbar">
 
-<h1 class="logo">MysteryLab</h1>
+<div class="logo">MysteryLab</div>
 
 <ul class="nav-links">
 <li><a href="index.html">Home</a></li>
@@ -23,37 +24,41 @@
 
 </nav>
 
-<section class="case-container">
+<section class="case">
 
 <h2>The Missing Necklace</h2>
 
-<p class="instructions">
-Click objects in the house to search for clues.
-</p>
+<p class="instructions">Click objects in the scene to investigate.</p>
 
 <div class="crime-scene">
 
-<img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200" class="scene-image">
+<img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1400" class="scene">
 
-<div class="clue clue1" onclick="showClue('footprint')"></div>
-<div class="clue clue2" onclick="showClue('letter')"></div>
-<div class="clue clue3" onclick="showClue('window')"></div>
-
-</div>
-
-<div class="clue-box" id="clueBox">
-
-<h3>Clue</h3>
-
-<p id="clueText"></p>
+<div class="clue clue1" onclick="revealClue(1)"></div>
+<div class="clue clue2" onclick="revealClue(2)"></div>
+<div class="clue clue3" onclick="revealClue(3)"></div>
 
 </div>
 
-<div class="solution">
+<div class="clue-display">
+
+<h3>Clue Found</h3>
+
+<p id="clueText">Investigate the room...</p>
+
+</div>
+
+<div class="solve-box">
 
 <input id="answer" placeholder="Who stole the necklace?">
 
-<button onclick="checkAnswer()">Submit</button>
+<button onclick="checkAnswer()">Solve Case</button>
+
+</div>
+
+<div class="score">
+
+Detective Score: <span id="score">0</span>
 
 </div>
 
@@ -62,4 +67,5 @@ Click objects in the house to search for clues.
 <script src="script.js"></script>
 
 </body>
+
 </html>

@@ -1,18 +1,34 @@
-function showClue(type){
+let score = 0
 
-const text = document.getElementById("clueText")
+function revealClue(num){
 
-if(type === "footprint"){
-text.innerText = "A muddy footprint near the door."
+const clueText = document.getElementById("clueText")
+
+if(num === 1){
+
+clueText.innerText = "You found muddy footprints near the door."
+
+score += 10
+
 }
 
-if(type === "letter"){
-text.innerText = "A letter mentioning someone named Alex."
+if(num === 2){
+
+clueText.innerText = "A note mentions someone named Alex."
+
+score += 10
+
 }
 
-if(type === "window"){
-text.innerText = "The window was forced open from outside."
+if(num === 3){
+
+clueText.innerText = "The window was forced open."
+
+score += 10
+
 }
+
+document.getElementById("score").innerText = score
 
 }
 
@@ -22,13 +38,13 @@ const answer = document.getElementById("answer").value.toLowerCase()
 
 if(answer === "alex"){
 
-alert("Correct! Alex stole the necklace.")
+alert("Correct! Alex stole the necklace. Case solved!")
 
 }
 
 else{
 
-alert("That's not correct. Keep investigating.")
+alert("That's not correct. Investigate more clues.")
 
 }
 
