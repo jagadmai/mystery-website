@@ -1,84 +1,144 @@
+// Scene
 const scene = new THREE.Scene()
 
+// Camera
 const camera = new THREE.PerspectiveCamera(
 75,
-window.innerWidth / window.innerHeight,
+window.innerWidth/window.innerHeight,
 0.1,
 1000
 )
 
-const renderer = new THREE.WebGLRenderer()
+// Renderer
+const renderer = new THREE.WebGLRenderer({antialias:true})
 
-renderer.setSize(window.innerWidth, window.innerHeight)
+renderer.setSize(window.innerWidth,window.innerHeight)
 
 document.body.appendChild(renderer.domElement)
 
 
-// floor
+// FLOOR
 
-const floorGeometry = new THREE.PlaneGeometry(20,20)
+const floorGeometry = new THREE.PlaneGeometry(40,40)
 
-const floorMaterial = new THREE.MeshBasicMaterial({
-color:0x333333,
-side:THREE.DoubleSide
+const floorMaterial = new THREE.MeshStandardMaterial({
+color:0x222222
 })
 
 const floor = new THREE.Mesh(floorGeometry,floorMaterial)
 
-floor.rotation.x = Math.PI/2
+floor.rotation.x = -Math.PI/2
 
 scene.add(floor)
 
 
-// walls
+// WALLS
 
-const wallGeometry = new THREE.BoxGeometry(20,10,1)
+const wallMaterial = new THREE.MeshStandardMaterial({
+color:0x444444
+})
 
-const wallMaterial = new THREE.MeshBasicMaterial({color:0x555555})
+function createWall(x,z,rotation){
 
-const backWall = new THREE.Mesh(wallGeometry,wallMaterial)
+const wallGeometry = new THREE.BoxGeometry(40,10,1)
 
-backWall.position.z = -10
-backWall.position.y = 5
+const wall = new THREE.Mesh(wallGeometry,wallMaterial)
 
-scene.add(backWall)
+wall.position.set(x,5,z)
+
+wall.rotation.y = rotation
+
+scene.add(wall)
+
+}
+
+createWall(0,-20,0)
+createWall(0,20,0)
+createWall(-20,0,Math.PI/2)
+createWall(20,0,Math.PI/2)
 
 
-// light
+// LIGHTING
 
-const light = new THREE.PointLight(0xffffff,1)
+const light = new THREE.PointLight(0xffffff,2)
 
-light.position.set(5,10,5)
+light.position.set(0,8,0)
 
 scene.add(light)
 
+const ambient = new THREE.AmbientLight(0x404040)
 
-// camera position
+scene.add(ambient)
+
+
+// CAMERA START POSITION
 
 camera.position.y = 2
 camera.position.z = 5
 
 
-// movement
+// MOVEMENT SYSTEM
+
+const keys = {}
 
 document.addEventListener("keydown",(e)=>{
+keys[e.key] = true
+})
 
-if(e.key==="w") camera.position.z -=0.2
-if(e.key==="s") camera.position.z +=0.2
-if(e.key==="a") camera.position.x -=0.2
-if(e.key==="d") camera.position.x +=0.2
-
+document.addEventListener("keyup",(e)=>{
+keys[e.key] = false
 })
 
 
-// game loop
+// GAME LOOP
 
 function animate(){
 
 requestAnimationFrame(animate)
+
+const speed = 0.1
+
+// Arrow keys movement
+
+if(keys["ArrowUp"]){
+
+camera.position.z -= speed
+
+}
+
+if(keys["ArrowDown"]){
+
+camera.position.z += speed
+
+}
+
+if(keys["ArrowLeft"]){
+
+camera.position.x -= speed
+
+}
+
+if(keys["ArrowRight"]){
+
+camera.position.x += speed
+
+}
 
 renderer.render(scene,camera)
 
 }
 
 animate()
+
+
+// RESIZE FIX
+
+window.addEventListener("resize",()=>{
+
+camera.aspect = window.innerWidth/window.innerHeight
+
+camera.updateProjectionMatrix()
+
+renderer.setSize(window.innerWidth,window.innerHeight)
+
+})
