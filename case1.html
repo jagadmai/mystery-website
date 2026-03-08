@@ -14,9 +14,9 @@
 <style>
 
 .case-container{
-max-width:1000px;
+max-width:1100px;
 margin:auto;
-padding:60px 20px;
+padding:50px 20px;
 text-align:center;
 }
 
@@ -27,45 +27,66 @@ border-radius:10px;
 margin-bottom:40px;
 }
 
-.board{
+.game-area{
 display:grid;
-grid-template-columns:1fr 1fr;
+grid-template-columns:2fr 1fr;
 gap:40px;
-margin-bottom:40px;
+align-items:start;
 }
 
-.clues{
-display:flex;
-flex-direction:column;
-gap:15px;
+.crime-scene{
+position:relative;
 }
 
-.clue{
-background:#1e293b;
-padding:20px;
+.crime-scene img{
+width:100%;
 border-radius:10px;
-cursor:pointer;
-transition:0.3s;
 }
 
-.clue:hover{
-border:1px solid #38bdf8;
-transform:scale(1.03);
+.object{
+position:absolute;
+border:2px solid transparent;
+cursor:pointer;
+}
+
+.object:hover{
+border:2px solid #38bdf8;
+box-shadow:0 0 10px #38bdf8;
+}
+
+/* object locations */
+
+.footprint{
+bottom:20%;
+left:40%;
+width:80px;
+height:60px;
+}
+
+.note{
+top:45%;
+left:55%;
+width:70px;
+height:50px;
+}
+
+.glass{
+top:30%;
+left:30%;
+width:70px;
+height:70px;
 }
 
 .evidence-box{
 background:#020617;
 padding:20px;
 border-radius:10px;
-min-height:200px;
+min-height:250px;
 text-align:left;
 }
 
-.evidence-box h3{
-margin-top:0;
-}
-
 .suspects{
+margin-top:40px;
 display:flex;
 justify-content:center;
 gap:20px;
@@ -112,43 +133,32 @@ font-weight:600;
 <div class="story">
 
 <p>
-During a wealthy mansion party, the lights suddenly went out.
-When they came back on, the priceless diamond necklace was gone.
+At a mansion party, the lights suddenly went out.
+When they came back on, a priceless necklace was gone.
 
-Three suspects were nearby.
-
-Search for clues and determine the thief.
+Investigate the room and uncover the truth.
 </p>
 
 </div>
 
-<div class="board">
+<div class="game-area">
 
-<div class="clues">
+<div class="crime-scene">
 
-<h2>🔎 Crime Scene</h2>
+<img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c" alt="room">
 
-<div class="clue" onclick="showClue('footprint')">
-👣 Footprint Near the Window
-</div>
-
-<div class="clue" onclick="showClue('note')">
-📝 Crumpled Note
-</div>
-
-<div class="clue" onclick="showClue('glass')">
-🥃 Wine Glass
-</div>
+<div class="object footprint" onclick="showClue('footprint')"></div>
+<div class="object note" onclick="showClue('note')"></div>
+<div class="object glass" onclick="showClue('glass')"></div>
 
 </div>
-
 
 <div class="evidence-box">
 
 <h3>📋 Evidence Log</h3>
 
 <p id="evidenceText">
-Click clues to analyze them...
+Click objects in the room to analyze them.
 </p>
 
 </div>
@@ -156,18 +166,18 @@ Click clues to analyze them...
 </div>
 
 
-<h2>🧠 Choose the Thief</h2>
+<h2>🧠 Who stole the necklace?</h2>
 
 <div class="suspects">
 
 <div class="suspect" onclick="guess('butler')">
 🤵 Butler
-<p>Claims he was serving drinks</p>
+<p>Serving drinks all night</p>
 </div>
 
 <div class="suspect" onclick="guess('chef')">
 👨‍🍳 Chef
-<p>Says he was in the kitchen</p>
+<p>Working in the kitchen</p>
 </div>
 
 <div class="suspect" onclick="guess('guest')">
@@ -181,7 +191,6 @@ Click clues to analyze them...
 
 </div>
 
-
 <script>
 
 function showClue(type){
@@ -189,15 +198,15 @@ function showClue(type){
 const evidence = document.getElementById("evidenceText")
 
 if(type === "footprint"){
-evidence.innerHTML = "👣 Large shoeprint. Likely a man's formal shoe."
+evidence.innerHTML = "👣 Large formal shoeprint near the window."
 }
 
 if(type === "note"){
-evidence.innerHTML = "📝 The note reads: 'Meet me after midnight.' Possibly a secret meeting."
+evidence.innerHTML = "📝 A note reads: 'Meet me after midnight.' Someone planned something."
 }
 
 if(type === "glass"){
-evidence.innerHTML = "🥃 Wine glass with lipstick. Probably belongs to a woman."
+evidence.innerHTML = "🥃 Wine glass with lipstick — likely from a female guest."
 }
 
 }
@@ -209,7 +218,7 @@ const result = document.getElementById("result")
 
 if(person === "guest"){
 
-result.innerHTML = "🏆 Case Solved! The guest stole the necklace to pay off gambling debts."
+result.innerHTML = "🏆 Case Solved! The wealthy guest stole the necklace to pay gambling debts."
 
 result.style.color = "lightgreen"
 
@@ -217,7 +226,7 @@ result.style.color = "lightgreen"
 
 else{
 
-result.innerHTML = "❌ That suspect doesn't fit the clues. Investigate more."
+result.innerHTML = "❌ That suspect doesn't match the clues."
 
 result.style.color = "tomato"
 
