@@ -1,31 +1,195 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Case 1</title>
+
+<title>Case 1 - MysteryLab</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="style.css">
+
+<style>
+
+.case-container{
+max-width:900px;
+margin:auto;
+padding:60px 20px;
+text-align:center;
+}
+
+.story{
+background:#1e293b;
+padding:30px;
+border-radius:10px;
+margin-bottom:40px;
+}
+
+.clues{
+display:flex;
+gap:20px;
+justify-content:center;
+flex-wrap:wrap;
+margin-bottom:40px;
+}
+
+.clue{
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+cursor:pointer;
+width:200px;
+transition:0.3s;
+}
+
+.clue:hover{
+transform:scale(1.05);
+border:1px solid #38bdf8;
+}
+
+.suspects{
+display:flex;
+gap:20px;
+justify-content:center;
+flex-wrap:wrap;
+}
+
+.suspect{
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+cursor:pointer;
+width:200px;
+transition:0.3s;
+}
+
+.suspect:hover{
+transform:scale(1.05);
+border:1px solid #38bdf8;
+}
+
+.result{
+margin-top:40px;
+font-size:22px;
+font-weight:600;
+}
+
+</style>
+
 </head>
 
 <body>
 
-<h1>Case 1: The Missing Trophy</h1>
+<nav class="navbar">
 
-<p>The school trophy disappeared last night.</p>
+<div class="logo">🕵️ MysteryLab</div>
 
-<h3>Suspects</h3>
+<div class="nav-links">
+<a href="index.html">Home</a>
+</div>
 
-<button onclick="checkAnswer('janitor')">Janitor</button>
-<button onclick="checkAnswer('captain')">Basketball Captain</button>
-<button onclick="checkAnswer('assistant')">Principal's Assistant</button>
+</nav>
 
-<h3>Clue</h3>
 
-<img src="https://picsum.photos/300" onclick="revealClue()" style="cursor:pointer">
+<div class="case-container">
 
-<p id="clue"></p>
-<p id="result"></p>
+<h1>Case 1: The Missing Necklace</h1>
 
-<script src="script.js"></script>
-<script src="clues.js"></script>
+<div class="story">
+
+<p>
+A priceless necklace has disappeared during a party.
+Three people were in the room when the lights went out.
+Find the clues and identify the thief.
+</p>
+
+</div>
+
+
+<h2>🔎 Click Clues</h2>
+
+<div class="clues">
+
+<div class="clue" onclick="showClue('footprint')">
+👣 Footprint
+</div>
+
+<div class="clue" onclick="showClue('note')">
+📝 Mysterious Note
+</div>
+
+<div class="clue" onclick="showClue('glass')">
+🥃 Wine Glass
+</div>
+
+</div>
+
+
+
+<h2>🧠 Who is the thief?</h2>
+
+<div class="suspects">
+
+<div class="suspect" onclick="guess('butler')">
+🤵 Butler
+</div>
+
+<div class="suspect" onclick="guess('chef')">
+👨‍🍳 Chef
+</div>
+
+<div class="suspect" onclick="guess('guest')">
+🧑 Guest
+</div>
+
+</div>
+
+<div class="result" id="result"></div>
+
+</div>
+
+
+
+<script>
+
+function showClue(type){
+
+if(type === "footprint"){
+alert("The footprint is very large — likely a man's shoe.")
+}
+
+if(type === "note"){
+alert("The note says: 'Meet me after midnight.'")
+}
+
+if(type === "glass"){
+alert("The wine glass has lipstick on it.")
+}
+
+}
+
+
+function guess(person){
+
+const result = document.getElementById("result")
+
+if(person === "guest"){
+result.innerHTML = "🏆 Correct! The guest stole the necklace!"
+result.style.color = "lightgreen"
+}
+
+else{
+result.innerHTML = "❌ Wrong suspect. Try again."
+result.style.color = "tomato"
+}
+
+}
+
+</script>
+
 
 </body>
+
 </html>
